@@ -1,0 +1,57 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Sample Template to create an EC2 Instance
+
+Parameters:
+  InstanceType:
+    Description: EC2 Instance Type
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - t2.small
+
+Resources: 
+  MySampleEC2Instance:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      ImageId: "ami-08e0ca9924195beba" #This is "Amazon Linux 2 AMI (HVM), SSD Volume Type"
+      AvailabilityZone: ap-south-1a
+      InstanceType: t2.micro
+      KeyName: EC2 Tutorial
+      SecurityGroups:
+        - !Ref InstanceSecurityGroup
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          # Use this for your user data (script without newlines)
+          # install httpd (Linux 2 version)
+          yum update -y
+          yum install -y httpd.x86_64
+          systemctl start httpd.service
+          systemctl enable httpd.service
+          echo "Hello World from $(hostname -f) at $(date)" > /var/www/html/index.html
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow http and ssh to client host
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+
+Outputs:
+  InstanceId:
+    Description: Instance Id of the EC2 Instance
+    Value: !Ref MySampleEC2Instance
+  PublicDNS:
+    Description: Public DNS Name of the EC2 Instance
+    Value: !GetAtt MySampleEC2Instance.PublicDnsName
+  PublicIPAdd:
+    Description: Public IP Addr of the EC2 Instance
+    Value: !GetAtt MySampleEC2Instance.PublicIp
+
