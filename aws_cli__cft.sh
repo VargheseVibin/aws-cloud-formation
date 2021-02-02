@@ -1,4 +1,4 @@
-aws cloudformation create-stack --stack-name MyFistCftEC2Stack02 --template-body file://aws-create-ec2.yaml
+aws cloudformation create-stack --stack-name MyFistCftEC2Stack02 --template-body file://aws-create-ec2.yaml --profile default
 # {
 #     "StackId": "arn:aws:cloudformation:ap-south-1:432974808028:stack/MyFistCftEC2Stack02/0639e240-64bf-11eb-a721-060255f00116"
 # }
